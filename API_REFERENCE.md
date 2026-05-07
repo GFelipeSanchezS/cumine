@@ -1,4 +1,4 @@
-# cumine API reference
+# cuMINE API reference
 
 This document describes the public Python API of `cumine`.
 
