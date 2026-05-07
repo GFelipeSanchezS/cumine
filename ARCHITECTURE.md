@@ -1,10 +1,10 @@
-# cumine architecture
+# cuMINE architecture
 
-This document explains how `cumine` is organized internally so a developer or AI agent can understand the project without reading every source file first.
+This document explains how `cuMINE` is organized internally so a developer or AI agent can understand the project without reading every source file first.
 
 ## Project goal
 
-`cumine` computes MINE-style dependency statistics for one pair of variables and for many pairwise/cross-pair variable combinations.
+`cuMINE` computes MINE-style dependency statistics for one pair of variables and for many pairwise/cross-pair variable combinations.
 
 The package exposes two estimator modes:
 
@@ -104,7 +104,7 @@ Backend/device policy and availability detection.
 Responsibilities:
 
 - Detect whether CuPy is importable.
-- Detect whether the native CUDA extension `cumine._cuda_ext` is importable.
+- Detect whether the native CUDA extension `cuMINE._cuda_ext` is importable.
 - Implement `resolve_device()` for `cpu`, `cupy`, `cuda`, `gpu`, and `auto`.
 - Track the last used backend via `set_last_backend()` and `backend_name()`.
 - Provide convenience helpers: `available_backends()`, `native_cuda_available()`, `cupy_available()`, `cuda_native_module()`, `cupy_module()`, `is_gpu()`.
@@ -150,7 +150,7 @@ Thin Python wrapper around the compiled extension.
 
 Responsibilities:
 
-- Import `cumine._cuda_ext`.
+- Import `cuMINE._cuda_ext`.
 - Expose native CUDA functions in a stable Python-facing form.
 - Provide wrappers such as `norm_mi_cuda`, `batch_mic_tic_fast`, `high_fidelity_scores`, and `batch_high_fidelity_mic_tic`.
 
@@ -166,7 +166,7 @@ Responsibilities:
 - Convert NumPy arrays to raw pointers and dimensions.
 - Allocate output NumPy arrays.
 - Call CUDA launcher functions implemented in `cuda_kernels.cu`.
-- Expose compiled functions in the `cumine._cuda_ext` module.
+- Expose compiled functions in the `cuMINE._cuda_ext` module.
 
 This file is not the place for estimator design. Keep it focused on argument conversion, memory layout, launch calls, and return values.
 
@@ -185,7 +185,7 @@ Responsibilities:
 When editing this file, always rebuild with:
 
 ```bash
-rm -rf build cumine.egg-info
+rm -rf build cuMINE.egg-info
 rm -f cumine/_cuda_ext*.so
 CUMINE_BUILD_CUDA=1 pip install -e "[dev]" --no-cache-dir
 ```
