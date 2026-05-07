@@ -1,4 +1,4 @@
-# cumine limitations and support status
+# cuMINE limitations and support status
 
 This document states what is tested, what is expected to work, and what is not officially supported yet.
 
@@ -27,7 +27,7 @@ Current performance checkpoint includes real native CUDA acceleration for both `
 
 | Platform | CPU mode | CuPy mode | Native CUDA extension | Status |
 |---|---:|---:|---:|---|
-| Ubuntu 22.04 | yes | likely/yes if CuPy installed | yes, tested | Primary tested platform. |
+| Ubuntu 22.04 | yes | yes if CuPy installed | yes, tested | Primary tested platform. |
 | Ubuntu 20.04 | likely | likely if CUDA/CuPy compatible | expected, not confirmed | Needs clean build validation. |
 | Ubuntu 24.04 | likely | likely if CUDA/CuPy compatible | expected, not confirmed | Should be tested next. |
 | Other Linux | likely | depends on CuPy/CUDA | possible, not confirmed | Requires supported NVIDIA driver/toolchain. |
@@ -140,7 +140,7 @@ For larger jobs, CUDA wins substantially.
 
 ## Numerical and statistical limitations
 
-`cumine` computes MINE-style estimates. Scores depend on estimator choice, grid budget, sample size, and data distribution.
+`cuMINE` computes MINE-style estimates. Scores depend on estimator choice, grid budget, sample size, and data distribution.
 
 Important limitations:
 
@@ -185,8 +185,8 @@ est="fast"
 Source distributions must include:
 
 ```text
-cumine/cuda_ext.cpp
-cumine/cuda_kernels.cu
+cuMINE/cuda_ext.cpp
+cuMINE/cuda_kernels.cu
 ```
 
 Source distributions must exclude:
@@ -197,7 +197,7 @@ __pycache__/
 *.so
 build/
 dist/
-cumine.egg-info/
+cuMINE.egg-info/
 .pytest_cache/
 ```
 
