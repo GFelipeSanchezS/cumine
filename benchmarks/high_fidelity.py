@@ -42,7 +42,7 @@ def bench_pstats():
 
     rng = np.random.default_rng(0)
 
-    # Keep these modest for CPU runs; CUDA can handle larger cases via benchmark_pairwise.py.
+    # Keep these modest for CPU runs; CUDA can handle larger cases via benchmarks/pairwise.py.
     for vars_, samples in [(6, 300), (8, 500), (10, 800)]:
         X = rng.standard_normal((vars_, samples))
         pairs = vars_ * (vars_ - 1) // 2
@@ -63,7 +63,7 @@ def bench_cstats():
 
     rng = np.random.default_rng(1)
 
-    # Keep these modest for CPU runs; CUDA can handle larger cases via benchmark_pairwise.py.
+    # Keep these modest for CPU runs; CUDA can handle larger cases via benchmarks/pairwise.py.
     for xvars, yvars, samples in [(5, 4, 300), (8, 6, 500), (10, 8, 800)]:
         X = rng.standard_normal((xvars, samples))
         Y = rng.standard_normal((yvars, samples))
