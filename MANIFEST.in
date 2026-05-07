@@ -1,0 +1,21 @@
+include README.md
+include INSTALL_UBUNTU_22.md
+include BENCHMARKS.md
+include RELEASE_CHECKLIST.md
+include requirements.txt
+include pyproject.toml
+include setup.py
+recursive-include cumine *.py *.cpp *.cu
+recursive-include tests *.py
+recursive-include tools *.py
+include validate_correctness.py
+exclude cumine/_cuda_ext*.so
+prune build
+prune dist
+prune cumine.egg-info
+global-exclude __pycache__ *.py[cod] .pytest_cache
+recursive-include benchmarks *.py
+recursive-exclude * __pycache__
+recursive-exclude * *.pyc
+recursive-exclude * *.so
+recursive-exclude * *.egg-info
