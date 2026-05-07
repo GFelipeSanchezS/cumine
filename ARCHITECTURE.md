@@ -185,9 +185,9 @@ Responsibilities:
 When editing this file, always rebuild with:
 
 ```bash
-rm -rf build cuMINE.egg-info
+rm -rf build cumine.egg-info
 rm -f cumine/_cuda_ext*.so
-CUMINE_BUILD_CUDA=1 pip install -e "[dev]" --no-cache-dir
+CUMINE_BUILD_CUDA=1 pip install -e ".[dev]" --no-cache-dir
 ```
 
 ## Runtime flow: single-pair `MINE`

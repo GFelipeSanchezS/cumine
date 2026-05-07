@@ -43,14 +43,14 @@ For `high_fidelity`, the native CUDA path accelerates adaptive DP scoring. Rank/
 CPU-only editable install:
 
 ```bash
-pip install -e "[dev]"
+pip install -e ".[dev]"
 pytest -qv
 ```
 
 CuPy backend for CUDA 12.x:
 
 ```bash
-pip install -e "[gpu,dev]"
+pip install -e ".[gpu,dev]"
 ```
 
 Native CUDA extension backend:
@@ -62,14 +62,14 @@ export PATH="$CUDA_HOME/bin:$PATH"
 export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
 
 # Clean up
-rm -rf build cuMINE.egg-info
-rm -f cuMINE/_cuda_ext*.so
+rm -rf build cumine.egg-info
+rm -f cumine/_cuda_ext*.so
 find . -type d -name "__pycache__" -prune -exec rm -rf {} +
 
 # Install and Test
-cuMINE_BUILD_CUDA=1 pip install -e "[dev]" --no-cache-dir
+CUMINE_BUILD_CUDA=1 pip install -e ".[dev]" --no-cache-dir
 pytest -qv
-cuMINE_DEVICE=cuda pytest -qv
+CUMINE_DEVICE=cuda pytest -qv
 ```
 
 Native CUDA requires:
@@ -84,7 +84,7 @@ Check:
 nvidia-smi
 nvcc --version
 python - <<'PY'
-from cuMINE import available_backends, native_cuda_available, cupy_available
+from cumine import available_backends, native_cuda_available, cupy_available
 print("available_backends:", available_backends())
 print("native_cuda_available:", native_cuda_available())
 print("cupy_available:", cupy_available())
@@ -94,7 +94,7 @@ PY
 Optional architecture pinning:
 
 ```bash
-CUMINE_BUILD_CUDA=1 CUMINE_CUDA_ARCH=sm_75 pip install -e "[dev]" --no-cache-dir
+CUMINE_BUILD_CUDA=1 CUMINE_CUDA_ARCH=sm_75 pip install -e ".[dev]" --no-cache-dir
 ```
 
 For RTX 2080 Ti, `sm_75` is appropriate.
@@ -214,19 +214,19 @@ The suite includes a regression test that verifies high-fidelity CUDA calls the 
 Single-pair high-fidelity benchmark:
 
 ```bash
-CUMINE_DEVICE=cpu python benchmark_high_fidelity.py
-CUMINE_DEVICE=cuda python benchmark_high_fidelity.py
+CUMINE_DEVICE=cpu python benchmarks/high_fidelity.py
+CUMINE_DEVICE=cuda python benchmarks/high_fidelity.py
 ```
 
 Pairwise/cross-pair benchmark:
 
 ```bash
-python benchmark_pairwise.py --est fast --device cpu
-python benchmark_pairwise.py --est fast --device cuda
+python benchmarks/pairwise.py --est fast --device cpu
+python benchmarks/pairwise.py --est fast --device cuda
 
-python benchmark_pairwise.py --est high_fidelity --device cpu
-python benchmark_pairwise.py --est high_fidelity --device cuda
-python benchmark_pairwise.py --est high_fidelity --device cuda --scale large
+python benchmarks/pairwise.py --est high_fidelity --device cpu
+python benchmarks/pairwise.py --est high_fidelity --device cuda
+python benchmarks/pairwise.py --est high_fidelity --device cuda --scale large
 ```
 
 Representative RTX 2080 Ti checkpoint numbers:

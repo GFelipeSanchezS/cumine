@@ -17,7 +17,7 @@ If you already have an activated virtualenv, keep using it.
 ## 2. CPU-only install
 
 ```bash
-pip install -e "[dev]"
+pip install -e ".[dev]"
 pytest -qv
 ```
 
@@ -26,10 +26,10 @@ pytest -qv
 For CUDA 12.x:
 
 ```bash
-pip install -e "[gpu,dev]"
+pip install -e ".[gpu,dev]"
 CUMINE_DEVICE=cupy python - <<'PY2'
 import numpy as np
-from cuMINE import MINE
+from cumine import MINE
 x = np.linspace(0, 1, 300)
 y = x ** 2
 m = MINE(est='fast', device='cupy')
@@ -66,28 +66,28 @@ env | grep -iE "CUDA|PATH|LD"
 Clean stale build products:
 
 ```bash
-rm -rf build cuMINE.egg-info
-rm -f cuMINE/_cuda_ext*.so
+rm -rf build cumine.egg-info
+rm -f cumine/_cuda_ext*.so
 find . -type d -name "__pycache__" -prune -exec rm -rf {} +
 ```
 
 Build native CUDA:
 
 ```bash
-CUMINE_BUILD_CUDA=1 pip install -e "[dev]" --no-cache-dir
+CUMINE_BUILD_CUDA=1 pip install -e ".[dev]" --no-cache-dir
 ```
 
 For RTX 2080 Ti, you can pin architecture:
 
 ```bash
-CUMINE_BUILD_CUDA=1 CUMINE_CUDA_ARCH=sm_75 pip install -e "[dev]" --no-cache-dir
+CUMINE_BUILD_CUDA=1 CUMINE_CUDA_ARCH=sm_75 pip install -e ".[dev]" --no-cache-dir
 ```
 
 ## 5. Verify installation
 
 ```bash
 python - <<'PY'
-from cuMINE import available_backends, native_cuda_available, cupy_available
+from cumine import available_backends, native_cuda_available, cupy_available
 print("available_backends:", available_backends())
 print("native_cuda_available:", native_cuda_available())
 print("cupy_available:", cupy_available())
@@ -147,9 +147,9 @@ python tools/characterize_estimators.py
 Rebuild with:
 
 ```bash
-rm -rf build cuMINE.egg-info
-rm -f cuMINE/_cuda_ext*.so
-CUMINE_BUILD_CUDA=1 pip install -e "[dev]" --no-cache-dir
+rm -rf build cumine.egg-info
+rm -f cumine/_cuda_ext*.so
+CUMINE_BUILD_CUDA=1 pip install -e ".[dev]" --no-cache-dir
 ```
 
 ### `nvcc` not found

@@ -16,7 +16,7 @@ find . -name "*.pyc" -delete
 ## CPU validation
 
 ```bash
-pip install -e "[dev]" --no-cache-dir
+pip install -e ".[dev]" --no-cache-dir
 pytest -qv
 python tools/characterize_estimators.py
 python benchmarks/pairwise.py --est fast --device cpu
@@ -35,7 +35,7 @@ Expected:
 ```bash
 rm -rf build cumine.egg-info
 rm -f cumine/_cuda_ext*.so
-CUMINE_BUILD_CUDA=1 pip install -e "[dev]" --no-cache-dir
+CUMINE_BUILD_CUDA=1 pip install -e ".[dev]" --no-cache-dir
 
 pytest -qv
 CUMINE_DEVICE=cuda pytest -qv

@@ -86,7 +86,7 @@ Native CUDA builds require:
 The project supports optional architecture pinning:
 
 ```bash
-CUMINE_BUILD_CUDA=1 CUMINE_CUDA_ARCH=sm_75 pip install -e "[dev]" --no-cache-dir
+CUMINE_BUILD_CUDA=1 CUMINE_CUDA_ARCH=sm_75 pip install -e ".[dev]" --no-cache-dir
 ```
 
 For RTX 2080 Ti, `sm_75` is appropriate.
@@ -197,7 +197,7 @@ __pycache__/
 *.so
 build/
 dist/
-cuMINE.egg-info/
+cumine.egg-info/
 .pytest_cache/
 ```
 
@@ -228,10 +228,10 @@ Before a public release, at minimum:
 pytest -qv
 CUMINE_DEVICE=cuda pytest -qv
 python tools/characterize_estimators.py
-python benchmark_pairwise.py --est fast --device cuda
-python benchmark_pairwise.py --est high_fidelity --device cuda
-CUMINE_DEVICE=cpu python benchmark_high_fidelity.py
-CUMINE_DEVICE=cuda python benchmark_high_fidelity.py
+python benchmarks/pairwise.py --est fast --device cuda
+python benchmarks/pairwise.py --est high_fidelity --device cuda
+CUMINE_DEVICE=cpu python benchmarks/high_fidelity.py
+CUMINE_DEVICE=cuda python benchmarks/high_fidelity.py
 ```
 
 Recommended before broad release:

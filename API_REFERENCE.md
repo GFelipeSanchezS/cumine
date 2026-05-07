@@ -381,7 +381,7 @@ Returns `True` if the native CUDA extension can be imported.
 This requires building with:
 
 ```bash
-CUMINE_BUILD_CUDA=1 pip install -e "[dev]" --no-cache-dir
+CUMINE_BUILD_CUDA=1 pip install -e ".[dev]" --no-cache-dir
 ```
 
 ### `cupy_available()`
@@ -396,7 +396,7 @@ Returns `True` if CuPy can be imported.
 For CUDA 12.x, install with:
 
 ```bash
-pip install -e "[gpu,dev]"
+pip install -e ".[gpu,dev]"
 ```
 
 ## Environment variables
