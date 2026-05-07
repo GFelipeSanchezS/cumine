@@ -1,13 +1,10 @@
-# cumine
+# cuMINE
 
-`cumine` is a Python implementation of MINE-style dependency statistics with CPU, CuPy, and optional native CUDA backends.
+`cuMINE` is a Python implementation of MINE-style dependency statistics with CPU, CuPy, and optional native CUDA backends.
 
 Current version: `0.1.0`.
 
 ## Documentation map
-
-Start here if you are handing the project to another developer or AI agent:
-
 - [ARCHITECTURE.md](ARCHITECTURE.md) — internal design, file responsibilities, estimator/backend flow, and CUDA integration boundaries.
 - [API_REFERENCE.md](API_REFERENCE.md) — public Python API for `MINE`, `pstats`, `cstats`, backend helpers, parameters, return shapes, and examples.
 - [DEVELOPMENT.md](DEVELOPMENT.md) — development workflow, build/test commands, CUDA debugging notes, benchmark workflow, and recommended repository cleanup.
@@ -22,7 +19,7 @@ Backends:
 
 - `cpu`: NumPy CPU backend.
 - `cupy`: CuPy backend, CUDA-backed through CuPy where implemented.
-- `cuda`: cumine's native compiled CUDA extension, built from this repository's `.cu` and `.cpp` sources.
+- `cuda`: cuMINE's native compiled CUDA extension, built from this repository's `.cu` and `.cpp` sources.
 - `gpu`: prefer native CUDA if available, otherwise CuPy.
 - `auto`: choose a backend based on workload size and available backends.
 
@@ -31,13 +28,13 @@ Estimators:
 - `est="high_fidelity"` — default estimator. Uses a global equal-frequency y partition and adaptive x-partition dynamic programming. The native CUDA backend accelerates the expensive DP scoring core.
 - `est="fast"` — global equal-frequency estimator optimized for large batched exploratory scans.
 
-`cumine` does not depend on any external MINE package at runtime.
+`cuMINE` does not depend on any external MINE package at runtime.
 
 ## Backend wording
 
 CuPy already uses CUDA underneath, so `device="cupy"` means CuPy CUDA-backed execution where the estimator path uses CuPy kernels.
 
-`device="cuda"` means cumine's own compiled CUDA extension. This is the main optimized GPU path for both `fast` and `high_fidelity`.
+`device="cuda"` means cuMINE's own compiled CUDA extension. This is the main optimized GPU path for both `fast` and `high_fidelity`.
 
 For `high_fidelity`, the native CUDA path accelerates adaptive DP scoring. Rank/order and prefix preparation are still performed on the host.
 
@@ -64,13 +61,15 @@ export CUDA_HOME=/usr/local/cuda
 export PATH="$CUDA_HOME/bin:$PATH"
 export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
 
-rm -rf build cumine.egg-info
-rm -f cumine/_cuda_ext*.so
+# Clean up
+rm -rf build cuMINE.egg-info
+rm -f cuMINE/_cuda_ext*.so
 find . -type d -name "__pycache__" -prune -exec rm -rf {} +
 
-CUMINE_BUILD_CUDA=1 pip install -e "[dev]" --no-cache-dir
+# Install and Test
+cuMINE_BUILD_CUDA=1 pip install -e "[dev]" --no-cache-dir
 pytest -qv
-CUMINE_DEVICE=cuda pytest -qv
+cuMINE_DEVICE=cuda pytest -qv
 ```
 
 Native CUDA requires:
@@ -85,7 +84,7 @@ Check:
 nvidia-smi
 nvcc --version
 python - <<'PY'
-from cumine import available_backends, native_cuda_available, cupy_available
+from cuMINE import available_backends, native_cuda_available, cupy_available
 print("available_backends:", available_backends())
 print("native_cuda_available:", native_cuda_available())
 print("cupy_available:", cupy_available())
