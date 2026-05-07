@@ -1,4 +1,4 @@
-# Install cumine on Ubuntu 22
+# Install cuMINE on Ubuntu 22
 
 These instructions assume Ubuntu 22, Python 3.10, and an NVIDIA GPU if you want native CUDA acceleration.
 
@@ -29,7 +29,7 @@ For CUDA 12.x:
 pip install -e "[gpu,dev]"
 CUMINE_DEVICE=cupy python - <<'PY2'
 import numpy as np
-from cumine import MINE
+from cuMINE import MINE
 x = np.linspace(0, 1, 300)
 y = x ** 2
 m = MINE(est='fast', device='cupy')
@@ -66,8 +66,8 @@ env | grep -iE "CUDA|PATH|LD"
 Clean stale build products:
 
 ```bash
-rm -rf build cumine.egg-info
-rm -f cumine/_cuda_ext*.so
+rm -rf build cuMINE.egg-info
+rm -f cuMINE/_cuda_ext*.so
 find . -type d -name "__pycache__" -prune -exec rm -rf {} +
 ```
 
@@ -87,7 +87,7 @@ CUMINE_BUILD_CUDA=1 CUMINE_CUDA_ARCH=sm_75 pip install -e "[dev]" --no-cache-dir
 
 ```bash
 python - <<'PY'
-from cumine import available_backends, native_cuda_available, cupy_available
+from cuMINE import available_backends, native_cuda_available, cupy_available
 print("available_backends:", available_backends())
 print("native_cuda_available:", native_cuda_available())
 print("cupy_available:", cupy_available())
@@ -147,8 +147,8 @@ python tools/characterize_estimators.py
 Rebuild with:
 
 ```bash
-rm -rf build cumine.egg-info
-rm -f cumine/_cuda_ext*.so
+rm -rf build cuMINE.egg-info
+rm -f cuMINE/_cuda_ext*.so
 CUMINE_BUILD_CUDA=1 pip install -e "[dev]" --no-cache-dir
 ```
 
