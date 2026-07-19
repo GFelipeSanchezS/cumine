@@ -10,6 +10,8 @@ Estimators:
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
+
 import numpy as np
 
 from ._backend import cupy_module, cuda_native_module
@@ -366,12 +368,44 @@ def compute_characteristic_matrix(x, y, alpha, c, est, device="cpu"):
     raise ValueError("est must be one of: 'high_fidelity', 'fast'")
 
 
+def _prepare_chunk_prefix(chunk, y_rank_cache, order_x_cache, ry_values, cuts, n_rys):
+    """Host-side rank/cut-prefix construction for one chunk of (i, j) pairs.
+
+    Pure CPU work, no CUDA calls — designed to run in a background thread
+    while a previous chunk's GPU kernel is in flight (see batch_high_fidelity_cuda).
+    """
+    prefix_chunks = []
+    prefix_offsets = np.empty((len(chunk), n_rys), dtype=np.int32)
+    offset = 0
+
+    for pidx, (i, j) in enumerate(chunk):
+        flat, offsets = _high_fidelity_prefix_single(
+            y_rank_cache[j],
+            order_x_cache[i],
+            ry_values,
+            cuts,
+        )
+        prefix_offsets[pidx, :] = offsets + offset
+        prefix_chunks.append(flat)
+        offset += int(flat.size)
+
+    prefix_flat = np.concatenate(prefix_chunks).astype(np.int32, copy=False)
+    return prefix_flat, prefix_offsets
+
+
 def batch_high_fidelity_cuda(X, Y, alpha=0.6, symmetric=False, max_pairs_per_chunk=32):
     """Batched high_fidelity pstats/cstats using native CUDA for the DP grid core.
 
     Ranking, x-ordering, and cut-prefix preparation are performed on the host;
     the expensive adaptive x-partition dynamic program is executed in CUDA for
     each pair/grid block.
+
+    The host-side prefix construction for chunk N+1 is prepared in a background
+    thread while chunk N's CUDA kernel is running (the native extension releases
+    the GIL for the duration of the kernel call), instead of the two phases
+    running strictly back-to-back. This overlap is what actually speeds things
+    up — it doesn't reduce total CPU or GPU work, it just lets them happen at
+    the same time instead of one blocking the other.
     """
     X = np.asarray(X, dtype=np.float64)
     Y = np.asarray(Y, dtype=np.float64)
@@ -408,45 +442,48 @@ def batch_high_fidelity_cuda(X, Y, alpha=0.6, symmetric=False, max_pairs_per_chu
     y_rank_cache = [_rank_stable(Y[j]) for j in range(ny)]
 
     max_pairs_per_chunk = int(max(1, max_pairs_per_chunk))
+    chunks = [
+        pair_list[start: start + max_pairs_per_chunk]
+        for start in range(0, len(pair_list), max_pairs_per_chunk)
+    ]
 
-    for start in range(0, len(pair_list), max_pairs_per_chunk):
-        chunk = pair_list[start: start + max_pairs_per_chunk]
-        prefix_chunks = []
-        prefix_offsets = np.empty((len(chunk), n_rys), dtype=np.int32)
-        offset = 0
-
-        for pidx, (i, j) in enumerate(chunk):
-            flat, offsets = _high_fidelity_prefix_single(
-                y_rank_cache[j],
-                order_x_cache[i],
-                ry_values,
-                cuts,
-            )
-            prefix_offsets[pidx, :] = offsets + offset
-            prefix_chunks.append(flat)
-            offset += int(flat.size)
-
-        prefix_flat = np.concatenate(prefix_chunks).astype(np.int32, copy=False)
-        mic_pair, tic_pair = native_cuda.batch_high_fidelity_mic_tic(
-            prefix_flat,
-            prefix_offsets.ravel(),
-            rx_list,
-            ry_list,
-            ry_index,
-            cuts,
-            len(chunk),
-            n_rys,
-            n,
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        next_future = pool.submit(
+            _prepare_chunk_prefix, chunks[0], y_rank_cache, order_x_cache, ry_values, cuts, n_rys
         )
-        tic_pair = tic_pair / float(n_grids)
 
-        for local_idx, (i, j) in enumerate(chunk):
-            mic_val = float(mic_pair[local_idx])
-            tic_val = float(tic_pair[local_idx])
-            mic[i, j] = mic_val
-            tic[i, j] = tic_val
-            if symmetric:
-                mic[j, i] = mic_val
-                tic[j, i] = tic_val
+        for chunk_idx, chunk in enumerate(chunks):
+            prefix_flat, prefix_offsets = next_future.result()
+
+            if chunk_idx + 1 < len(chunks):
+                next_future = pool.submit(
+                    _prepare_chunk_prefix,
+                    chunks[chunk_idx + 1], y_rank_cache, order_x_cache, ry_values, cuts, n_rys,
+                )
+
+            # native_cuda releases the GIL for the duration of the kernel call,
+            # so the submitted next-chunk prep above genuinely runs concurrently
+            # with this GPU call rather than waiting for it.
+            mic_pair, tic_pair = native_cuda.batch_high_fidelity_mic_tic(
+                prefix_flat,
+                prefix_offsets.ravel(),
+                rx_list,
+                ry_list,
+                ry_index,
+                cuts,
+                len(chunk),
+                n_rys,
+                n,
+            )
+            tic_pair = tic_pair / float(n_grids)
+
+            for local_idx, (i, j) in enumerate(chunk):
+                mic_val = float(mic_pair[local_idx])
+                tic_val = float(tic_pair[local_idx])
+                mic[i, j] = mic_val
+                tic[i, j] = tic_val
+                if symmetric:
+                    mic[j, i] = mic_val
+                    tic[j, i] = tic_val
 
     return mic, tic

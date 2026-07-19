@@ -110,7 +110,10 @@ static PyObject* py_norm_mi(PyObject* self, PyObject* args) {
     const int* yb = static_cast<const int*>(PyArray_DATA(yb_arr));
 
     double out_value = 0.0;
-    const int status = norm_mi_cuda_impl(xb, yb, rx, ry, n, &out_value);
+    int status;
+    Py_BEGIN_ALLOW_THREADS
+    status = norm_mi_cuda_impl(xb, yb, rx, ry, n, &out_value);
+    Py_END_ALLOW_THREADS
 
     Py_DECREF(xb_arr);
     Py_DECREF(yb_arr);
@@ -199,7 +202,9 @@ static PyObject* py_batch_mic_tic_equifreq(PyObject* self, PyObject* args) {
     char err_msg[512];
     err_msg[0] = '\0';
 
-    const int status = batch_mic_tic_equifreq_cuda_impl(
+    int status;
+    Py_BEGIN_ALLOW_THREADS
+    status = batch_mic_tic_equifreq_cuda_impl(
         static_cast<const int*>(PyArray_DATA(ranks_x_arr)),
         static_cast<const int*>(PyArray_DATA(ranks_y_arr)),
         nx,
@@ -212,6 +217,7 @@ static PyObject* py_batch_mic_tic_equifreq(PyObject* self, PyObject* args) {
         err_msg,
         static_cast<int>(sizeof(err_msg))
     );
+    Py_END_ALLOW_THREADS
 
     Py_DECREF(ranks_x_arr);
     Py_DECREF(ranks_y_arr);
@@ -294,7 +300,9 @@ static PyObject* py_high_fidelity_scores(PyObject* self, PyObject* args) {
     }
 
     char err_msg[512]; err_msg[0] = '\0';
-    const int status = high_fidelity_scores_cuda_impl(
+    int status;
+    Py_BEGIN_ALLOW_THREADS
+    status = high_fidelity_scores_cuda_impl(
         static_cast<const int*>(PyArray_DATA(prefix_flat)),
         static_cast<const int*>(PyArray_DATA(prefix_offsets)),
         static_cast<const int*>(PyArray_DATA(rx_list)),
@@ -310,6 +318,7 @@ static PyObject* py_high_fidelity_scores(PyObject* self, PyObject* args) {
         err_msg,
         static_cast<int>(sizeof(err_msg))
     );
+    Py_END_ALLOW_THREADS
 
     Py_DECREF(prefix_flat); Py_DECREF(prefix_offsets); Py_DECREF(rx_list);
     Py_DECREF(ry_list); Py_DECREF(ry_index); Py_DECREF(cuts);
@@ -380,7 +389,9 @@ static PyObject* py_batch_high_fidelity_mic_tic(PyObject* self, PyObject* args) 
     }
 
     char err_msg[512]; err_msg[0] = '\0';
-    const int status = batch_high_fidelity_mic_tic_cuda_impl(
+    int status;
+    Py_BEGIN_ALLOW_THREADS
+    status = batch_high_fidelity_mic_tic_cuda_impl(
         static_cast<const int*>(PyArray_DATA(prefix_flat)),
         static_cast<const int*>(PyArray_DATA(prefix_offsets)),
         static_cast<const int*>(PyArray_DATA(rx_list)),
@@ -398,6 +409,7 @@ static PyObject* py_batch_high_fidelity_mic_tic(PyObject* self, PyObject* args) 
         err_msg,
         static_cast<int>(sizeof(err_msg))
     );
+    Py_END_ALLOW_THREADS
 
     Py_DECREF(prefix_flat); Py_DECREF(prefix_offsets); Py_DECREF(rx_list);
     Py_DECREF(ry_list); Py_DECREF(ry_index); Py_DECREF(cuts);

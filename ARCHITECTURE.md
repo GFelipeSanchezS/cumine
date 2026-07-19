@@ -37,7 +37,7 @@ Recommended release-era layout is described in `DEVELOPMENT.md`. The current imp
 | File | Purpose |
 |---|---|
 | `README.md` | Main user-facing overview, install, usage, current benchmark summary, and documentation map. |
-| `INSTALL_UBUNTU_22.md` | Tested Ubuntu 22.04 installation instructions. |
+| `INSTALL_UBUNTU.md` | Tested Ubuntu installation instructions, including known environment fixes for newer releases. |
 | `BENCHMARKS.md` | Current benchmark checkpoint and commands. |
 | `RELEASE_CHECKLIST.md` | Release gate checklist. |
 | `ARCHITECTURE.md` | This file. Internal design map. |

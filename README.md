@@ -10,7 +10,7 @@ Current version: `0.1.0`.
 - [DEVELOPMENT.md](DEVELOPMENT.md) — development workflow, build/test commands, CUDA debugging notes, benchmark workflow, and recommended repository cleanup.
 - [LIMITATIONS.md](LIMITATIONS.md) — tested platforms, unsupported/partially supported cases, numerical caveats, and release constraints.
 - [BENCHMARKS.md](BENCHMARKS.md) — current CPU vs native CUDA benchmark checkpoint.
-- [INSTALL_UBUNTU_22.md](INSTALL_UBUNTU_22.md) — tested Ubuntu 22.04 installation path.
+- [INSTALL_UBUNTU.md](INSTALL_UBUNTU.md) — tested Ubuntu installation path, including known environment fixes for newer releases.
 - [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) — validation gates before tagging or publishing a release.
 
 ## What is included
